@@ -74,22 +74,30 @@ export const sendVisualMessage = async (
   turn: ChatTurn,
   customerId: string = "4" // Sarah Lee is Customer 4
 ): Promise<ChatTurn> => {
-  let image_contents: any = {};
+
+  let image_contents = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGD4DwABBAEAX+XDSwAAAABJRU5ErkJggg==";
 
   if (turn.image) {
-    const contents = turn.image.split(",");
-    image_contents[contents[0]] = contents[1];
-  } else {
-    // send empty image - this is a single black pixel
-    // which the prompt flow ignores given it's too small
-    image_contents["data:image/png;base64"] =
-      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGD4DwABBAEAX+XDSwAAAABJRU5ErkJggg==";
+    image_contents = turn.image;
   }
 
+  console.log(image_contents);
+
   const body = {
-    chat_history: [],
-    question: turn.message,
-    customer_id: customerId.toString(),
+    max_tokens: 1000,
+    messages: [
+      {
+        role: "system",
+        content: "You are a helpful assistant for an ecommerce website in a company named Contoso. This website sells outdoor apparel including tents. You are trained to interpret images about people and make responsible assumptions about them. You suggest products based on the image and the conversation. You can also answer questions about the products and the company.",
+      },
+      {
+        role: "user",
+        content: [
+          { type: "text", text: turn.message },
+          { type: "image_url", image_url: { url: image_contents, detail: "high" } },
+        ],
+      },
+    ],
   };
 
   console.log(body);
@@ -107,7 +115,7 @@ export const sendVisualMessage = async (
 
   const newTurn: ChatTurn = {
     name: "Jane Doe",
-    message: data["answer"],
+    message: data["choices"][0]["message"]["content"],
     status: "done",
     type: "assistant",
     avatar: "",
