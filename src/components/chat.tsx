@@ -180,7 +180,7 @@ export const Chat = () => {
 
       sendVisualMessage(newTurn).then((responseTurn) => {
         const t1 = performance.now();
-        console.log(`sendPromptFlowMessage took ${t1 - t0} milliseconds.`);
+        console.log(`sendVisualMessage took ${t1 - t0} milliseconds.`);
         dispatch({ type: "replace", payload: responseTurn });
       });
     } else {
