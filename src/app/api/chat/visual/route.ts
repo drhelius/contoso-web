@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
   const headers = {
     "Content-Type": "application/json",
-    Authorization: "Bearer " + api_key,
+    "api-key": api_key,
   };
 
   const response = await fetch(api_endpoint, {
