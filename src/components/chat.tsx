@@ -68,8 +68,9 @@ export const Chat = () => {
       setShowCamera(true);
       setChatType(ChatType.Visual);
     } else {
-      setShowCamera(false);
-      setChatType(ChatType.PromptFlow);
+      setVideo(true);
+      setShowCamera(true);
+      setChatType(ChatType.Video);
     }
   }, [searchParams]);
 
