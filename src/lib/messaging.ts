@@ -93,7 +93,7 @@ export const sendVisualMessage = async (
         parameters: {
           endpoint: "",
           key: "",
-          indexName: "contoso-web-v",
+          indexName: "",
         },
       },
     ],
