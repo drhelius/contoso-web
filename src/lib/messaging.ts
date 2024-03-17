@@ -75,30 +75,50 @@ export const sendVisualMessage = async (
   customerId: string = "4" // Sarah Lee is Customer 4
 ): Promise<ChatTurn> => {
 
-  let image_contents = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGD4DwABBAEAX+XDSwAAAABJRU5ErkJggg==";
-
-  if (turn.image) {
-    image_contents = turn.image;
-  }
-
-  console.log(image_contents);
-
   const body = {
     max_tokens: 1000,
+    temperature: 0,
+    top_p: 1,
+    enhancements: {
+      ocr: {
+        enabled: true,
+      },
+      grounding: {
+        enabled: true,
+      },
+    },
+    dataSources: [
+      {
+        type: "AzureCognitiveSearch",
+        parameters: {
+          endpoint: "",
+          key: "",
+          indexName: "contoso-web-v",
+        },
+      },
+    ],
     messages: [
       {
         role: "system",
-        content: "You are a helpful assistant for an ecommerce website in a company named Contoso. This website sells outdoor apparel including tents. You are trained to interpret images about people and make responsible assumptions about them. You suggest products based on the image and the conversation. You can also answer questions about the products and the company.",
+        content: "You are an AI assistant for the Contoso Outdoors product information that helps people find information in the shortest amount of text possible. Be brief and concise in your response and include emojis",
       },
       {
         role: "user",
         content: [
           { type: "text", text: turn.message },
-          { type: "image_url", image_url: { url: image_contents, detail: "high" } },
+          { type: "image_url", image_url: { url: turn.image, detail: "high" } },
         ],
       },
     ],
   };
+
+  if (!turn.image) {
+    const arr = body.messages[1].content;
+    if (Array.isArray(arr))
+    {
+      body.messages[1].content = arr.filter(item => item.type !== "image_url");
+    }
+  }
 
   console.log(body);
 
